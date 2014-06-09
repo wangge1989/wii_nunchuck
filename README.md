@@ -1,4 +1,4 @@
 wii_nunchuck
-============
-
-wii nunchuck joystick driver for freertos
+===========
+This project aim at provide a wii joystick driver for STM32 MCU with
+FreeRTOS runing on it
