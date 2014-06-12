@@ -93,7 +93,7 @@ PROCESSOR += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 
 
 #Flags required by the ST library
-STFLAGS = -DUSE_STDPERIPH_DRIVER -DSTM32F30X
+STFLAGS = -DUSE_STDPERIPH_DRIVER -DSTM32F303xC
 
 ifeq ($(DEBUG), 1)
   CFLAGS += -O0 -g3

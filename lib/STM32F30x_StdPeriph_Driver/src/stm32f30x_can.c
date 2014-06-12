@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f30x_can.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    04-September-2012
+  * @version V1.1.1
+  * @date    04-April-2014
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Controller area network (CAN) peripheral:           
   *           + Initialization and Configuration 
@@ -23,7 +23,7 @@
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);      
     (#) CAN pins configuration:
         (++) Enable the clock for the CAN GPIOs using the following function:
-             RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);   
+             RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOx, ENABLE);   
         (++) Connect the involved CAN pins to AF9 using the following function 
              GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_CANx); 
         (++) Configure these CAN pins in alternate function mode by calling
@@ -50,7 +50,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.

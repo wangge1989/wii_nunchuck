@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  @note    Copyright (C) 2011-2012 ARM Limited. All rights reserved.
-  @par
-   ARM Limited (ARM) is supplying this software for use with Cortex-M
-   processor based microcontroller, but can be equally used for other
-   suitable  processor architectures. This file can be freely distributed.
-   Modifications to this file shall be clearly marked.
+  date: 04.07.2012
 
-  @date: 24.01.2012
+  Copyright (C) 2011 - 2012 ARM Limited. All rights reserved.
 
-  @par
-   THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-   OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-   ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-   CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+   - Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+   - Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+   - Neither the name of ARM nor the names of its contributors may be used 
+     to endorse or promote products derived from this software without 
+     specific prior written permission.
 
-  This is a draft for CMSIS-SVD version 1.1
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+
+  This is CMSIS-SVD version 1.1
   For backward compatibility all additional tags have been made optional.
   Extensions may be mandatory for successful device header file generation
   Other changes are related to some restructuring of the schema.
+  
+  Note that the memory section has been removed since this would limit the
+  reuse of descriptions for a series of devices.
  -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified" version="1.1">
@@ -33,6 +47,8 @@
   <xs:simpleType name="cpuNameType">
     <xs:restriction base="xs:token">
       <xs:enumeration value="CM0"/>
+      <xs:enumeration value="CM0PLUS"/>
+      <xs:enumeration value="CM0+"/>
       <xs:enumeration value="SC000"/>
       <xs:enumeration value="CM3"/>
       <xs:enumeration value="SC300"/>
@@ -61,22 +77,18 @@
       <xs:enumeration value="uint8_t"/>
       <xs:enumeration value="uint16_t"/>
       <xs:enumeration value="uint32_t"/>
-      <xs:enumeration value="uint32_t"/>
+      <xs:enumeration value="uint64_t"/>
       <xs:enumeration value="int8_t"/>
       <xs:enumeration value="int16_t"/>
       <xs:enumeration value="int32_t"/>
-      <xs:enumeration value="int32_t"/>
-      <xs:enumeration value="uint64_t"/>
       <xs:enumeration value="int64_t"/>
       <xs:enumeration value="uint8_t *"/>
       <xs:enumeration value="uint16_t *"/>
       <xs:enumeration value="uint32_t *"/>
-      <xs:enumeration value="uint32_t *"/>
+      <xs:enumeration value="uint64_t *"/>
       <xs:enumeration value="int8_t *"/>
       <xs:enumeration value="int16_t *"/>
       <xs:enumeration value="int32_t *"/>
-      <xs:enumeration value="int32_t *"/>
-      <xs:enumeration value="uint64_t *"/>
       <xs:enumeration value="int64_t *"/>
     </xs:restriction>
   </xs:simpleType>
@@ -198,25 +210,6 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <!-- V1.1 memoryTypeType specifies memory ranges and types for linker file generation -->
-  <xs:complexType name="memoryType">
-    <xs:sequence>
-      <xs:element name="name" type="identifierType"/>
-      <xs:element name="base" type="scaledNonNegativeInteger"/>
-      <xs:element name="size" type="scaledNonNegativeInteger"/>
-      <xs:element name="usage">
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="RAM"/>
-            <xs:enumeration value="ROM"/>
-            <xs:enumeration value="FLASH"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="mirroredFrom" type="identifierType" minOccurs="0"/>
-      <xs:element name="isCached" type="xs:boolean" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
   <!-- interruptType specifies how to describe an interrupt associated with a peripheral -->
   <xs:complexType name="interruptType">
     <xs:sequence>
@@ -274,8 +267,11 @@
       <xs:element name="mpuPresent" type="xs:boolean"/>
       <!-- V1.1: fpuPresent specifies whether or not a floating point hardware unit is physically present -->
       <xs:element name="fpuPresent" type="xs:boolean"/>
+      <!-- V1.1: vtorPresent is used for Cortex-M0+ based devices only. It indicates whether the Vector Table Offset
+                 Register is implemented in the device or not -->				   
+      <xs:element name="vtorPresent" type="xs:boolean" minOccurs="0"/>
       <!-- V1.1: nvicPrioBits specifies the number of bits used by the Nested Vectored Interrupt Controller
-                   for defining the priority level = # priority levels -->
+                 for defining the priority level = # priority levels -->
       <xs:element name="nvicPrioBits" type="scaledNonNegativeInteger"/>
       <!-- V1.1: vendorSystickConfig is set true if a custom system timer is implemented in the device 
                    instead of the ARM specified SysTickTimer -->
@@ -309,7 +305,7 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="derivedFrom" type="identifierType" use="optional"/>
+    <xs:attribute name="derivedFrom" type="enumerationNameType" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="fieldType">
@@ -390,18 +386,25 @@
     <xs:attribute name="derivedFrom" type="identifierType" use="optional"/>
   </xs:complexType>
 
-  <!-- A cluster is a set of registers that are composed into a C data structure in the device header file -->
+  <!-- V1.1: A cluster is a set of registers that are composed into a C data structure in the device header file -->
   <xs:complexType name="clusterType">
     <xs:sequence>
-      <xs:group    ref="dimElementGroup" minOccurs="0"/>
+      <xs:group   ref="dimElementGroup" minOccurs="0"/>
       <xs:element name="name" type="identifierType"/>
+      <xs:element name="description" type="xs:string"/>
+      <!-- V1.1: alternateCluster specifies an alternative description for a cluster address range that is
+                 already fully described. In this case the cluster name must be unique within the peripheral -->
+      <xs:element name="alternateCluster" type="identifierType" minOccurs="0"/>
+      <!-- V1.1: headerStructName specifies the name for the cluster structure typedef
+                 used in the device header generation instead of the cluster name -->
+      <xs:element name="headerStructName" type="identifierType" minOccurs="0"/>
       <xs:element name="addressOffset" type="scaledNonNegativeInteger"/>
       <xs:element name="register" type="registerType" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="derivedFrom" type="identifierType" use="optional"/>
   </xs:complexType>
 
-  <!-- the registers section can have an arbitrary list of clusters and registers -->
+  <!-- the registers section can have an arbitrary list of cluster and register sections -->
   <xs:complexType name="registersType">
     <xs:choice minOccurs="1" maxOccurs="unbounded">
       <xs:element name="cluster" type="clusterType"/>
@@ -417,17 +420,20 @@
       <xs:element name="version" type="stringType" minOccurs="0"/>
       <!-- description provides a high level functional description of the peripheral -->
       <xs:element name="description" type="stringType" minOccurs="0"/>
+      <!-- V1.1: alternatePeripheral specifies an alternative description for an address range that is
+           already fully by a peripheral described. In this case the peripheral name must be unique within the device description -->
+      <xs:element name="alternatePeripheral" type="identifierType" minOccurs="0"/>
       <!-- groupName assigns this peripheral to a group of peripherals. This is only used bye the System View -->
       <xs:element name="groupName" type="xs:Name" minOccurs="0"/>
       <!-- prependToName specifies a prefix that is placed in front of each register name of this peripheral. 
                          The device header file will show the registers in a C-Struct of the peripheral without the prefix. -->
-      <xs:element name="prependToName" type="xs:Name" minOccurs="0"/>
+      <xs:element name="prependToName" type="identifierType" minOccurs="0"/>
       <!-- appendToName is a postfix that is appended to each register name of this peripheral. The device header 
                          file will sho the registers in a C-Struct of the peripheral without the postfix -->
-      <xs:element name="appendToName" type="xs:Name" minOccurs="0"/>
+      <xs:element name="appendToName" type="identifierType" minOccurs="0"/>
       <!-- V1.1: headerStructName specifies the name for the peripheral structure typedef
                          used in the device header generation instead of the peripheral name -->
-      <xs:element name="headerStructName" type="xs:Name" minOccurs="0"/>
+      <xs:element name="headerStructName" type="identifierType" minOccurs="0"/>
       <!-- disableCondition contains a logical expression based on constants and register or bit-field values 
                          if the condition is evaluated to true, the peripheral display will be disabled -->
       <xs:element name="disableCondition" type="stringType" minOccurs="0"/>
@@ -492,16 +498,6 @@
              reset value -->
         <xs:group ref="registerPropertiesGroup" minOccurs="0"/>
 
-        <!-- V1.1: memories is a new section in the CMSIS-SVD description for automatic generation
-             of device specific linker scripts -->
-        <xs:element name="memories" minOccurs="0">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="memory" type="memoryType" minOccurs="1" maxOccurs="unbounded"/>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        
         <!-- peripherals is containing all peripherals -->
         <xs:element name="peripherals">
           <xs:complexType>

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f30x_tim.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    04-September-2012
+  * @version V1.1.1
+  * @date    04-April-2014
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the TIM peripheral:
   *            + TimeBase management
@@ -99,7 +99,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@
 #include "stm32f30x_tim.h"
 #include "stm32f30x_rcc.h"
 
-/** @addtogroup STM32F2xx_StdPeriph_Driver
+/** @addtogroup STM32F30x_StdPeriph_Driver
   * @{
   */
 
@@ -1226,7 +1226,7 @@ void TIM_OCStructInit(TIM_OCInitTypeDef* TIM_OCInitStruct)
   *            @arg TIM_OCMode_Asymmetric_PWM2            
   * @retval None
   */
-void TIM_SelectOCxM(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint32_t TIM_OCMode) /* to be updated*/
+void TIM_SelectOCxM(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint32_t TIM_OCMode)
 {
   uint32_t tmp = 0;
   uint16_t tmp1 = 0;
@@ -1262,7 +1262,7 @@ void TIM_SelectOCxM(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint32_t TIM_OCMode
     *(__IO uint32_t *) tmp &= CCMR_OC24M_MASK;
     
     /* Configure the OCxM bits in the CCMRx register */
-    *(__IO uint32_t *) tmp |= (uint16_t)(TIM_OCMode << 8);
+    *(__IO uint32_t *) tmp |= (uint32_t)(TIM_OCMode << 8);
   }
 }
 
@@ -1408,7 +1408,7 @@ void TIM_ForcedOC2Config(TIM_TypeDef* TIMx, uint16_t TIM_ForcedAction)
   tmpccmr1 &= (uint32_t)~TIM_CCMR1_OC2M;
 
   /* Configure The Forced output Mode */
-  tmpccmr1 |= (uint32_t)(TIM_ForcedAction << 8);
+  tmpccmr1 |= ((uint32_t)TIM_ForcedAction << 8);
 
   /* Write to TIMx CCMR1 register */
   TIMx->CCMR1 = tmpccmr1;
@@ -1465,7 +1465,7 @@ void TIM_ForcedOC4Config(TIM_TypeDef* TIMx, uint16_t TIM_ForcedAction)
   tmpccmr2 &= (uint32_t)~TIM_CCMR2_OC4M;
 
   /* Configure The Forced output Mode */
-  tmpccmr2 |= (uint32_t)(TIM_ForcedAction << 8);
+  tmpccmr2 |= ((uint32_t)TIM_ForcedAction << 8);
 
   /* Write to TIMx CCMR2 register */
   TIMx->CCMR2 = tmpccmr2;
@@ -1521,7 +1521,7 @@ void TIM_ForcedOC6Config(TIM_TypeDef* TIMx, uint16_t TIM_ForcedAction)
   tmpccmr3 &= (uint32_t)~TIM_CCMR3_OC6M;
 
   /* Configure The Forced output Mode */
-  tmpccmr3 |= (uint32_t)(TIM_ForcedAction << 8);
+  tmpccmr3 |= ((uint32_t)TIM_ForcedAction << 8);
 
   /* Write to TIMx CCMR3 register */
   TIMx->CCMR3 = tmpccmr3;
@@ -1580,7 +1580,7 @@ void TIM_OC2PreloadConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload)
   tmpccmr1 &= (uint32_t)(~TIM_CCMR1_OC2PE);
 
   /* Enable or Disable the Output Compare Preload feature */
-  tmpccmr1 |= (uint32_t)(TIM_OCPreload << 8);
+  tmpccmr1 |= ((uint32_t)TIM_OCPreload << 8);
 
   /* Write to TIMx CCMR1 register */
   TIMx->CCMR1 = tmpccmr1;
@@ -1638,7 +1638,7 @@ void TIM_OC4PreloadConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload)
   tmpccmr2 &= (uint32_t)(~TIM_CCMR2_OC4PE);
 
   /* Enable or Disable the Output Compare Preload feature */
-  tmpccmr2 |= (uint32_t)(TIM_OCPreload << 8);
+  tmpccmr2 |= ((uint32_t)TIM_OCPreload << 8);
 
   /* Write to TIMx CCMR2 register */
   TIMx->CCMR2 = tmpccmr2;
@@ -1696,7 +1696,7 @@ void TIM_OC6PreloadConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload)
   tmpccmr3 &= (uint32_t)(~TIM_CCMR3_OC6PE);
 
   /* Enable or Disable the Output Compare Preload feature */
-  tmpccmr3 |= (uint32_t)(TIM_OCPreload << 8);
+  tmpccmr3 |= ((uint32_t)TIM_OCPreload << 8);
 
   /* Write to TIMx CCMR3 register */
   TIMx->CCMR3 = tmpccmr3;
@@ -1757,7 +1757,7 @@ void TIM_OC2FastConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCFast)
   tmpccmr1 &= (uint32_t)(~TIM_CCMR1_OC2FE);
 
   /* Enable or Disable the Output Compare Fast Bit */
-  tmpccmr1 |= (uint32_t)(TIM_OCFast << 8);
+  tmpccmr1 |= ((uint32_t)TIM_OCFast << 8);
 
   /* Write to TIMx CCMR1 */
   TIMx->CCMR1 = tmpccmr1;
@@ -1817,7 +1817,7 @@ void TIM_OC4FastConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCFast)
   tmpccmr2 &= (uint32_t)(~TIM_CCMR2_OC4FE);
 
   /* Enable or Disable the Output Compare Fast Bit */
-  tmpccmr2 |= (uint32_t)(TIM_OCFast << 8);
+  tmpccmr2 |= ((uint32_t)TIM_OCFast << 8);
 
   /* Write to TIMx CCMR2 */
   TIMx->CCMR2 = tmpccmr2;
@@ -1876,7 +1876,7 @@ void TIM_ClearOC2Ref(TIM_TypeDef* TIMx, uint16_t TIM_OCClear)
   tmpccmr1 &= (uint32_t)~TIM_CCMR1_OC2CE;
 
   /* Enable or Disable the Output Compare Clear Bit */
-  tmpccmr1 |= (uint32_t)(TIM_OCClear << 8);
+  tmpccmr1 |= ((uint32_t)TIM_OCClear << 8);
 
   /* Write to TIMx CCMR1 register */
   TIMx->CCMR1 = tmpccmr1;
@@ -1934,7 +1934,7 @@ void TIM_ClearOC4Ref(TIM_TypeDef* TIMx, uint16_t TIM_OCClear)
   tmpccmr2 &= (uint32_t)~TIM_CCMR2_OC4CE;
 
   /* Enable or Disable the Output Compare Clear Bit */
-  tmpccmr2 |= (uint32_t)(TIM_OCClear << 8);
+  tmpccmr2 |= ((uint32_t)TIM_OCClear << 8);
 
   /* Write to TIMx CCMR2 register */
   TIMx->CCMR2 = tmpccmr2;
@@ -1992,7 +1992,7 @@ void TIM_ClearOC6Ref(TIM_TypeDef* TIMx, uint16_t TIM_OCClear)
   tmpccmr3 &= (uint32_t)~TIM_CCMR3_OC6CE;
 
   /* Enable or Disable the Output Compare Clear Bit */
-  tmpccmr3 |= (uint32_t)(TIM_OCClear << 8);
+  tmpccmr3 |= ((uint32_t)TIM_OCClear << 8);
 
   /* Write to TIMx CCMR3 register */
   TIMx->CCMR3 = tmpccmr3;
@@ -2093,7 +2093,7 @@ void TIM_OC2PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity)
 
   /* Set or Reset the CC2P Bit */
   tmpccer &= (uint32_t)(~TIM_CCER_CC2P);
-  tmpccer |= (uint32_t)(TIM_OCPolarity << 4);
+  tmpccer |= ((uint32_t)TIM_OCPolarity << 4);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2120,7 +2120,7 @@ void TIM_OC2NPolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCNPolarity)
 
   /* Set or Reset the CC2NP Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC2NP;
-  tmpccer |= (uint32_t)(TIM_OCNPolarity << 4);
+  tmpccer |= ((uint32_t)TIM_OCNPolarity << 4);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2147,7 +2147,7 @@ void TIM_OC3PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity)
 
   /* Set or Reset the CC3P Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC3P;
-  tmpccer |= (uint32_t)(TIM_OCPolarity << 8);
+  tmpccer |= ((uint32_t)TIM_OCPolarity << 8);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2174,7 +2174,7 @@ void TIM_OC3NPolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCNPolarity)
 
   /* Set or Reset the CC3NP Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC3NP;
-  tmpccer |= (uint32_t)(TIM_OCNPolarity << 8);
+  tmpccer |= ((uint32_t)TIM_OCNPolarity << 8);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2201,7 +2201,7 @@ void TIM_OC4PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity)
 
   /* Set or Reset the CC4P Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC4P;
-  tmpccer |= (uint32_t)(TIM_OCPolarity << 12);
+  tmpccer |= ((uint32_t)TIM_OCPolarity << 12);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2228,7 +2228,7 @@ void TIM_OC5PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity)
 
   /* Set or Reset the CC5P Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC5P;
-  tmpccer |= (uint32_t)(TIM_OCPolarity << 16);
+  tmpccer |= ((uint32_t)TIM_OCPolarity << 16);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2255,7 +2255,7 @@ void TIM_OC6PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity)
 
   /* Set or Reset the CC6P Bit */
   tmpccer &= (uint32_t)~TIM_CCER_CC6P;
-  tmpccer |= (uint32_t)(TIM_OCPolarity << 20);
+  tmpccer |= ((uint32_t)TIM_OCPolarity << 20);
 
   /* Write to TIMx CCER register */
   TIMx->CCER = tmpccer;
@@ -2285,13 +2285,13 @@ void TIM_CCxCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx)
   assert_param(IS_TIM_CHANNEL(TIM_Channel));
   assert_param(IS_TIM_CCX(TIM_CCx));
 
-  tmp = CCER_CCE_SET << TIM_Channel;
+  tmp = (uint32_t)CCER_CCE_SET << (uint32_t)TIM_Channel;
 
   /* Reset the CCxE Bit */
-  TIMx->CCER &= (uint32_t)~ tmp;
+  TIMx->CCER &= (uint32_t)(~tmp);
 
   /* Set or reset the CCxE Bit */ 
-  TIMx->CCER |=  (uint32_t)(TIM_CCx << TIM_Channel);
+  TIMx->CCER |=  ((uint32_t)TIM_CCx << (uint32_t)TIM_Channel);
 }
 
 /**
@@ -2315,13 +2315,13 @@ void TIM_CCxNCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN)
   assert_param(IS_TIM_COMPLEMENTARY_CHANNEL(TIM_Channel));
   assert_param(IS_TIM_CCXN(TIM_CCxN));
 
-  tmp = CCER_CCNE_SET << TIM_Channel;
+  tmp = (uint32_t)CCER_CCNE_SET << (uint32_t)TIM_Channel;
 
   /* Reset the CCxNE Bit */
   TIMx->CCER &= (uint32_t) ~tmp;
 
   /* Set or reset the CCxNE Bit */ 
-  TIMx->CCER |=  (uint32_t)(TIM_CCxN << TIM_Channel);
+  TIMx->CCER |=  ((uint32_t)TIM_CCxN << (uint32_t)TIM_Channel);
 }
 /**
   * @}
