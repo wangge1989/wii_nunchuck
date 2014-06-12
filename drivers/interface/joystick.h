@@ -18,8 +18,8 @@
 #define JOYSTICK_GPIO_I2C_SCL            GPIO_Pin_6
 #define JOYSTICK_GPIO_I2C_SDA            GPIO_Pin_7
 #define JOYSTICK_GPIO_I2C_SCL_SOURCE     GPIO_PinSource6
-#define JOYSTICK_GPIO_SPI_SDA_SOURCE     GPIO_PinSource7
-#define JOYSTICK_GPIO_SPI_AF             GPIO_AF_4
+#define JOYSTICK_GPIO_I2C_SDA_SOURCE     GPIO_PinSource7
+#define JOYSTICK_GPIO_I2C_AF             GPIO_AF_4
 
 // Init and test of the connection to the hardware
 bool joystick_init(void);

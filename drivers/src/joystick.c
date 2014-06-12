@@ -1,5 +1,5 @@
 /**
- * joystick.c: ps2 joystick low level driver
+ * joystick.c: wii Nunchuck joystick low level driver
  */
 #include <stdbool.h>
 #include <stdint.h>
@@ -14,87 +14,55 @@
 #include "nvicconf.h"
 #include "joystick.h"
 
-uint8_t spi_send_byte(uint8_t byte);
-uint8_t spi_receive_byte(void);
 
 /* Private variables */
 static bool isInit = false;
 
-void spi_interrupt_handler(void)
+void i2c_interrupt_handler(void)
 {
 }
 
 bool joystick_init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-    SPI_InitTypeDef  SPI_InitStructure;
+    I2C_InitTypeDef  I2C_InitStructure;
     //NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Enable the SPI periph */
-    RCC_APB2PeriphClockCmd(JOYSTICK_SPI_CLK, ENABLE);
+    /* Enable I2C1 peripheral clock */
+    RCC_APB2PeriphClockCmd(JOYSTICK_I2C_CLK, ENABLE);
     
-    /* Enable CS  GPIO clock */
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE, ENABLE);
+    /* Enable SDA, SCL GPIO clock */
+    RCC_AHBPeriphClockCmd(JOYSTICK_GPIO_I2C_CLK, ENABLE);
 
-    /* Enable CS, SCK, MOSI and MISO GPIO clocks */
-    RCC_AHBPeriphClockCmd(JOYSTICK_GPIO_SPI_CLK, ENABLE);
-
-    GPIO_PinAFConfig(JOYSTICK_GPIO_SPI_PORT, JOYSTICK_GPIO_SPI_CS_SOURCE, JOYSTICK_GPIO_SPI_AF);
-    GPIO_PinAFConfig(JOYSTICK_GPIO_SPI_PORT, JOYSTICK_GPIO_SPI_SCK_SOURCE, JOYSTICK_GPIO_SPI_AF);
-    GPIO_PinAFConfig(JOYSTICK_GPIO_SPI_PORT, JOYSTICK_GPIO_SPI_MISO_SOURCE, JOYSTICK_GPIO_SPI_AF);
-    GPIO_PinAFConfig(JOYSTICK_GPIO_SPI_PORT, JOYSTICK_GPIO_SPI_MOSI_SOURCE, JOYSTICK_GPIO_SPI_AF);
+    GPIO_PinAFConfig(JOYSTICK_GPIO_I2C_PORT, JOYSTICK_GPIO_I2C_SDA_SOURCE, JOYSTICK_GPIO_I2C_AF);
+    GPIO_PinAFConfig(JOYSTICK_GPIO_I2C_PORT, JOYSTICK_GPIO_I2C_SCL_SOURCE, JOYSTICK_GPIO_I2C_AF);
 
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
-    /* SPI CS pin configuration */
-    GPIO_InitStructure.GPIO_Pin = JOYSTICK_GPIO_SPI_CS;
-    GPIO_Init(JOYSTICK_GPIO_SPI_PORT, &GPIO_InitStructure);
+    /* I2C SDA pin configuration */
+    GPIO_InitStructure.GPIO_Pin = JOYSTICK_GPIO_I2C_SDA;
+    GPIO_Init(JOYSTICK_GPIO_I2C_PORT, &GPIO_InitStructure);
 
-    /* SPI SCK pin configuration */
-    GPIO_InitStructure.GPIO_Pin = JOYSTICK_GPIO_SPI_SCK;
-    GPIO_Init(JOYSTICK_GPIO_SPI_PORT, &GPIO_InitStructure);
+    /* I2C SCL pin configuration */
+    GPIO_InitStructure.GPIO_Pin = JOYSTICK_GPIO_I2C_SCL;
+    GPIO_Init(JOYSTICK_GPIO_I2C_PORT, &GPIO_InitStructure);
 
-    /* SPI MOSI pin configuration */
-    GPIO_InitStructure.GPIO_Pin =  JOYSTICK_GPIO_SPI_MOSI;
-    GPIO_Init(JOYSTICK_GPIO_SPI_PORT, &GPIO_InitStructure);
+    /* I2C configuration -------------------------------------------------------*/
+    I2C_InitStructure.I2C_Mode                = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_AnalogFilter        = I2C_AnalogFilter_Enable;
+    I2C_InitStructure.I2C_DigitalFilter       = 0x00;
+    I2C_InitStructure.I2C_OwnAddress1         = 0x00;
+    I2C_InitStructure.I2C_Ack                 = I2C_Ack_Enable;
+    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    I2C_InitStructure.I2C_Timing              = 0x00100209;
+  
+    /* Apply JOYSTICK_I2C configuration before enable it */
+    I2C_Init(JOYSTICK_I2C, &I2C_InitStructure);
 
-    /* SPI MISO pin configuration */
-    GPIO_InitStructure.GPIO_Pin = JOYSTICK_GPIO_SPI_MISO;
-    GPIO_Init(JOYSTICK_GPIO_SPI_PORT, &GPIO_InitStructure);
-
-    /* SPI configuration -------------------------------------------------------*/
-    SPI_I2S_DeInit(JOYSTICK_SPI);
-    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-    SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
-    SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
-    SPI_InitStructure.SPI_NSS = SPI_NSS_Hard;
-    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;
-    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_LSB;
-    SPI_InitStructure.SPI_CRCPolynomial = 7;
-    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-    SPI_Init(JOYSTICK_SPI, &SPI_InitStructure);
-
-    /* Configure the RX FIFO Threshold */
-    SPI_RxFIFOThresholdConfig(JOYSTICK_SPI, SPI_RxFIFOThreshold_QF);
-    
-    /* Enable hardware NSS output */
-    SPI_SSOutputCmd(JOYSTICK_SPI, ENABLE);
-
-    /* Configure GPIO PIN for Lis Chip select */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-    /* Deselect : Chip Select high */
-    GPIO_SetBits(GPIOE, GPIO_Pin_3);
-
-    /* Enable and set SPI1 Interrupt to the assigned priority */
+    /* Enable and set I2C Interrupt to the assigned priority */
     //NVIC_InitStructure.NVIC_IRQChannel = SPI1_IRQn;
     //NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_JOYSTICK_PRI;
     //NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
@@ -103,8 +71,8 @@ bool joystick_init(void)
 
     //SPI_I2S_ITConfig(JOYSTICK_SPI, SPI_I2S_IT_RXNE, ENABLE);
 
-    /* Enable JOYSTICK_SPI  */
-    //SPI_Cmd(JOYSTICK_SPI, ENABLE);
+    /* JOYSTICK_I2C Peripheral Enable */
+    I2C_Cmd(JOYSTICK_I2C, ENABLE);
 
     isInit = true;
 
@@ -117,24 +85,16 @@ bool joystick_test(void)
 }
 
 /***********************
- * SPI private methods *
+ * I2C private methods *
  ***********************/
-uint8_t spi_send_byte(uint8_t byte)
+uint8_t joystick_write(uint8_t device_addr, uint8_t reg_addr,
+                       uint8_t* p_buffer, uint16_t num_byte_to_write)
 {
-    /* Loop while DR register in not emplty */
-    while (SPI_I2S_GetFlagStatus(JOYSTICK_SPI, SPI_I2S_FLAG_TXE) == RESET);
-
-    /* Send byte through the SPI1 peripheral */
-    SPI_SendData8(JOYSTICK_SPI, byte);
-
-    /* Wait to receive a byte */
-    while (SPI_I2S_GetFlagStatus(JOYSTICK_SPI, SPI_I2S_FLAG_RXNE) == RESET);
-
-    /* Return the byte read from the SPI bus */
-    return SPI_ReceiveData8(JOYSTICK_SPI);
+    return 0;
 }
 
-uint8_t spi_receive_byte(void)
+uint8_t joystick_read(uint8_t device_addr, uint8_t reg_addr,
+                      uint8_t* p_buffer, uint16_t num_byte_to_read)
 {
-    return spi_send_byte(DUMMY_BYTE);
+    return 0;
 }

@@ -163,9 +163,9 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
-void SPI1_IRQHandler(void)
+void I2C1_EV_IRQHandler(void)
 {
-    spi_interrupt_handler();
+    i2c_interrupt_handler();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

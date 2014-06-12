@@ -86,7 +86,6 @@ bool systemTest()
 void systemTask(void *arg)
 {
     bool pass = true;
-    uint8_t ps2value[9];
 
     //Init the high-levels modules
     systemInit();
@@ -94,18 +93,6 @@ void systemTask(void *arg)
     pass &= systemTest();
     while(1)
     {
-        SPI_Cmd(JOYSTICK_SPI, ENABLE);
-        ps2value[0] = spi_send_byte(0x01);
-        ps2value[1] = spi_send_byte(0x42);
-        ps2value[2] = spi_send_byte(0x00);
-        ps2value[3] = spi_send_byte(0x00);
-        ps2value[4] = spi_send_byte(0x00);
-        ps2value[5] = spi_send_byte(0x00);
-        ps2value[6] = spi_send_byte(0x00);
-        ps2value[7] = spi_send_byte(0x00);
-        ps2value[8] = spi_send_byte(0x00);
-        SPI_Cmd(JOYSTICK_SPI, DISABLE);
-        vTaskDelay(250);
     }
 }
 
