@@ -49,7 +49,7 @@ VPATH += init hal/src modules/src utils/src drivers/src
 PROJ_OBJ = main.o system_stm32f30x.o
 
 # Drivers
-PROJ_OBJ += stm32f30x_it.o led.o joystick.o
+PROJ_OBJ += stm32f30x_it.o led.o joystick.o stm32f30x_i2c_cpal_usercallback.o
 
 # Hal
 PROJ_OBJ += ledseq.o
@@ -82,6 +82,7 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 
 INCLUDES  = -I$(FREERTOS)/include -I$(PORT) -I.
 INCLUDES += -I$(STLIB)/STM32F30x_StdPeriph_Driver/inc
+INCLUDES += -I$(STLIB)/STM32F30x_I2C_CPAL_Driver/inc
 INCLUDES += -I$(STLIB)/CMSIS/Device/ST/STM32F30x/Include
 INCLUDES += -I$(STLIB)/CMSIS/Include
 INCLUDES += -Iconfig -Ihal/interface -Imodules/interface

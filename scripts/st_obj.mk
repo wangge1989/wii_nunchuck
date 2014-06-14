@@ -3,6 +3,8 @@
 # Copyright (c) 2009, EAT-IT
 
 VPATH+=$(STLIB)/STM32F30x_StdPeriph_Driver/src/
+VPATH+=$(STLIB)/STM32F30x_I2C_CPAL_Driver/src/
+
 ST_OBJ=
 #ST_OBJ+=stm32f30x_adc.o
 #ST_OBJ+=stm32f30x_can.o
@@ -26,3 +28,5 @@ ST_OBJ+=stm32f30x_rcc.o
 #ST_OBJ+=stm32f30x_tim.o
 #ST_OBJ+=stm32f30x_usart.o
 #ST_OBJ+=stm32f30x_wwdg.o
+ST_OBJ+=stm32f30x_i2c_cpal.o
+ST_OBJ+=stm32f30x_i2c_cpal_hal.o

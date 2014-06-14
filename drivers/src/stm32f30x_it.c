@@ -3,14 +3,14 @@
   * @file    stm32f30x_it.c 
   * @author  MCD Application Team
   * @version V1.1.0
-  * @date    20-September-2012
+  * @date    04-April-2014
   * @brief   Main Interrupt Service Routines.
   *          This file provides template for all exceptions handler and 
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -28,7 +28,12 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "joystick.h"
+#include "stm32f30x_it.h"
+
+/** @addtogroup STM32F30x_StdPeriph_Templates
+  * @{
+  */
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -145,6 +150,7 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f30x.s).                                            */
 /******************************************************************************/
+
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None
@@ -158,14 +164,5 @@ void SysTick_Handler(void)
   * @}
   */ 
 
-/**
-  * @brief  This function handles SPI1 interrupt request.
-  * @param  None
-  * @retval None
-  */
-void I2C1_EV_IRQHandler(void)
-{
-    i2c_interrupt_handler();
-}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
