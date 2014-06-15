@@ -28,5 +28,3 @@ ST_OBJ+=stm32f30x_rcc.o
 #ST_OBJ+=stm32f30x_tim.o
 #ST_OBJ+=stm32f30x_usart.o
 #ST_OBJ+=stm32f30x_wwdg.o
-ST_OBJ+=stm32f30x_i2c_cpal.o
-ST_OBJ+=stm32f30x_i2c_cpal_hal.o
